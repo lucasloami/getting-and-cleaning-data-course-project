@@ -3,13 +3,6 @@ merge_datasets <- function() {
   training_set <- read.table("./data/train/X_train.txt")
   test_set <- read.table("./data/test/X_test.txt")
 
-  #read data labels from file
-  training_labels <- read.table("./data/train/y_train.txt")
-  test_labels <- read.table("./data/test/y_test.txt")
-
-  # merge y values
-  labels <- rbind(training_labels, test_labels)
-
   # read header from file
   header <- read.table("./data/features.txt")
   # header <- c(header[,"V2"], "y") # add labels column to header
@@ -20,9 +13,6 @@ merge_datasets <- function() {
   #add header to data
   colnames(data_set) <- header[,"V2"]
 
-  # add label values to dataset
-  data_set["y"] <- labels
-
   return(data_set)
 }
 
@@ -31,9 +21,35 @@ filter_dataset <- function(rawdata) {
   rd <- rawdata[grep("((mean|std){1}(freq){0,}[(][)])",names(rawdata))]
 
   # keep label values in data frame
-  rd["y"] <- rawdata["y"]
+  # rd["y"] <- rawdata["y"]
 
   return(rd)
+}
+
+add_activity_labels_column <- function(rawdata) {
+  #read data labels from file
+  training_labels <- read.table("./data/train/y_train.txt")
+  test_labels <- read.table("./data/test/y_test.txt")
+
+  # merge labels values
+  labels <- rbind(training_labels, test_labels)
+
+  # add label values to dataset
+  rawdata["y"] <- labels
+  return(rawdata)
+}
+
+add_subject_column <- function(rawdata) {
+  #read subject from files
+  training_subject <- read.table("./data/train/subject_train.txt")
+  test_subject <- read.table("./data/test/subject_test.txt")
+
+  # merge subject data
+  subjects <- rbind(training_subject, test_subject)
+
+  # add subject ids to dataset
+  rawdata["subject_id"] <- subjects
+  return(rawdata)
 }
 
 replace_activities_numbers_for_names <- function(rawdata) {
@@ -50,11 +66,20 @@ replace_activities_numbers_for_names <- function(rawdata) {
   return(rawdata)
 }
 
+create_final_dataset <- function(rawdata) {
+  library(dplyr)
+  final_dataset <- group_by(rawdata, y, subject_id) %>% summarise_each(funs(mean))
+  return(final_dataset)
+}
+
 run_analysis <- function() {
   dataset <- merge_datasets()
   filtered_dataset <- filter_dataset(dataset)
+  filtered_dataset <- add_activity_labels_column(filtered_dataset)
+  filtered_dataset <- add_subject_column(filtered_dataset)
   filtered_dataset <- replace_activities_numbers_for_names(filtered_dataset)
-  
+  final_dataset <- create_final_dataset(filtered_dataset)
+  print(dim(final_dataset))
 }
 
 download_data <- function() {
