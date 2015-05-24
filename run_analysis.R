@@ -79,7 +79,7 @@ run_analysis <- function() {
   filtered_dataset <- add_subject_column(filtered_dataset)
   filtered_dataset <- replace_activities_numbers_for_names(filtered_dataset)
   final_dataset <- create_final_dataset(filtered_dataset)
-  print(dim(final_dataset))
+  write.table(final_dataset, file = "./data/final_dataset.txt", row.names = FALSE)
 }
 
 download_data <- function() {
