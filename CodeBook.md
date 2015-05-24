@@ -11,10 +11,10 @@ at 50 Hz.
 
 * Merge:
 
-** adding rows: the "training_set.txt" and the "test_set.txt" were merged using the rbind function because in this way we prevent some problem with reordering the data. The "y_train.txt" and the "y_test.txt" were merged using the rbind function for the same reason. The
+  * adding rows: the "training_set.txt" and the "test_set.txt" were merged using the rbind function because in this way we prevent some problem with reordering the data. The "y_train.txt" and the "y_test.txt" were merged using the rbind function for the same reason. The
 "subject_train.txt" and the "subject_test.txt" were merged using the rbind function
 
-** adding columns: the "y" column and the "subject_id" column were added to the dataset
+  * adding columns: the "y" column and the "subject_id" column were added to the dataset
 through the following command: final_dataset$NEW_COLUMN_NAME <- NEW_COLUMN_NAME_VALUES, where
 NEW_COLUMN_NAME can be replaced by "y" or "subject_id" and NEW_COLUMN_NAME_VALUES can be
 replaced by the vector containing the respective values
